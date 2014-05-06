@@ -13,29 +13,30 @@ public class MainTest {
         c.setColumns(100);
         c.setLines(10);
     	c.setBackground(' ');
-    	c.setMode(RContainer.MODE_PAGE_AXIS);
+    	c.setMode(RContainer.MODE_LINE_AXIS);
     	
-    	RComponent c2 = new RComponent(5,5);
+    	RComponent c2 = new RComponent(2,4);
     	c2.setBackground('+');
-        //c2.setBorder(RComponent.BORDER_1);
-    	RComponent c3 = new RComponent(2,3);
-    	c3.setBackground('-');
+        c2.setBorder(RComponent.BORDER_3);
     	c.add(c2);
-    	c.add(c3);
     	
     	RLabel lab = new RLabel("hello world !");
     	c.add(lab);
+        lab.setBackground('&');
     	
     	List<String> l = new ArrayList<String>();
     	l.add("1");
     	l.add("10");
         l.add("100");
         l.add("1010");
+        l.add("10100");
     	
     	RList<String> rl = new RList(l);
-    	
+        rl.setBorder(RComponent.BORDER_3);
+        rl.setBackground('Ž');
+        lab.setBorder(RComponent.BORDER_3);
     	c.add(rl);
-    	    	
+    	
     	c.print();
     }
 

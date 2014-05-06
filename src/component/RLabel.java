@@ -14,7 +14,7 @@ public class RLabel extends RComponent {
     public void repaint() {
         this.setColumns(this.label.length());
         this.setLines(1);
-        
+        super.repaint();
         for(int i = 0 ; i < this.label.length() ; i++) {
             this.graphics[0][i] = this.label.charAt(i);
         }
@@ -26,5 +26,8 @@ public class RLabel extends RComponent {
         this.label = label;
         this.setColumns(this.label.length());
         this.setLines(1);
+    }
+    public String toString() {
+        return "RList>"+this.label;
     }
 }

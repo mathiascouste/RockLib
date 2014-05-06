@@ -4,14 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RComponent{
+    private static final char[] ASCII_HORIZONTAL = {' ','─','=','.'};
+    private static final char[] ASCII_VERTICAL =   {' ','│','║','.'};
+    private static final char[] ASCII_CORNER_B_L = {' ','└','╚','.'};
+    private static final char[] ASCII_CORNER_B_R = {' ','┘','╝','.'};
+    private static final char[] ASCII_CORNER_T_L = {' ','┌','╔','.'};
+    private static final char[] ASCII_CORNER_T_R = {' ','┐','╗','.'};
+    private static final char[] ASCII_CENTER =     {' ','┼','╬','.'};
+    private static final char[] ASCII_MIDDLE_L =   {' ','├','╠','.'};
+    private static final char[] ASCII_MIDDLE_R =   {' ','┤','╣','.'};
+    private static final char[] ASCII_MIDDLE_B =   {' ','┴','╩','.'};
+    private static final char[] ASCII_MIDDLE_T =   {' ','┬','╦','.'};
+    private static final int x=0;
     public static final int BORDER_0 = 0;
     public static final int BORDER_1 = 1;
     public static final int BORDER_2 = 2;
+    public static final int BORDER_3 = 3;
 	protected int positionX;
 	protected int positionY;
 	protected int lines;
 	protected int columns;
-	protected char[][] graphics;
+    protected char[][] fore_graphics;
+    protected char[][] back_graphics;
+    protected char[][] graphics;
 	protected char background;
 	protected int border;
 
@@ -29,29 +44,50 @@ public class RComponent{
         this.adjustGraphics();
 	}
 	protected void adjustGraphics() {
-	    this.graphics = new char[lines][columns];
+	    if(this.border==0) {
+	        this.graphics = new char[lines][columns];
+	    } else {
+	        this.graphics = new char[lines+2][columns+2];
+	    }
     }
     public char[][] getGraphics() {
 		return graphics;
 	}
 	public void repaint() {
-		for(int i = 0 ; i < lines ; i++) {
-            for(int j = 0 ; j < columns ; j++) {
+		for(int i = 0 ; i < graphics.length ; i++) {
+            for(int j = 0 ; j < graphics[0].length ; j++) {
             	graphics[i][j] = background;
             }
         }
 	}
 	public void paint(char[][] graphics) {
-		this.repaint();
-		for(int i = 0 ; i < this.graphics.length ; i++) {
-			for(int j = 0 ; j < this.graphics[i].length ; j++) {
-				graphics[this.positionX+i][this.positionY+j] = this.graphics[i][j];
-			}
-		}
-		this.paintBorder(graphics);
+        this.repaint();
+        int bC = 0;
+        if(border!=0) {
+            bC = 1;
+        }
+        for(int i = 0; i < this.graphics.length ; i++) {
+            for(int j = 0 ; j < this.graphics[i].length ; j++) {
+                graphics[this.positionX+i+bC][this.positionY+j+bC] = this.graphics[i][j];
+            }
+        }
+        if(this.border!=0) {
+            this.paintBorder(graphics);
+        }
 	}
-	public void paintBorder(char[][] graphics2) {
-        
+	public void paintBorder(char[][] graphics) {
+        graphics[this.positionX][this.positionY] = ASCII_CORNER_T_L[this.border];
+        graphics[this.positionX+this.lines+1][this.positionY] = ASCII_CORNER_B_L[this.border];
+        graphics[this.positionX][this.positionY+this.columns+1] = ASCII_CORNER_T_R[this.border];
+        graphics[this.positionX+this.lines+1][this.positionY+this.columns+1] = ASCII_CORNER_B_R[this.border];
+        for(int i = 1 ; i < this.columns+1 ; i++) { // horizontal
+            graphics[this.positionX][this.positionY+i] = ASCII_HORIZONTAL[this.border];
+            graphics[this.positionX+this.lines+1][this.positionY+i] = ASCII_HORIZONTAL[this.border];
+        }
+        for(int i = 1 ; i < this.lines+1 ; i++) {
+            graphics[this.positionX+i][this.positionY] = ASCII_VERTICAL[this.border];
+            graphics[this.positionX+i][this.positionY+this.columns+1] = ASCII_VERTICAL[this.border];
+        }
     }
     public int getPositionX() {
 		return positionX;
@@ -106,11 +142,13 @@ public class RComponent{
 	public void print() {
 		this.repaint();
 		String toRet = "";
-		for(int i = 0 ; i < this.lines ; i++) {
-			for(int j = 0 ; j < this.columns ; j++) {
+		for(int i = 0 ; i < this.graphics.length ; i++) {
+			for(int j = 0 ; j < this.graphics[0].length ; j++) {
 				toRet += this.graphics[i][j];
 			}
-			toRet += '\n';
+			if(i<this.lines-1) {
+			    toRet += '\n';
+			}
 		}
 		System.out.println(toRet);
 	}

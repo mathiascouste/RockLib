@@ -26,4 +26,7 @@ public class RList<T> extends RContainer {
             this.add(new RLabel((String)t));
         }
     }
+    public String toString() {
+        return "RList>"+this.list;
+    }
 }

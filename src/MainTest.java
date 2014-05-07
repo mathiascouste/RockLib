@@ -13,7 +13,8 @@ public class MainTest {
         c.setColumns(100);
         c.setLines(10);
     	c.setBackground(' ');
-    	c.setMode(RContainer.MODE_LINE_AXIS);
+    	c.setMode(RContainer.MODE_PAGE_AXIS);
+        c.setBorder(RComponent.BORDER_SOLID_THICK);
     	
     	RComponent c2 = new RComponent(2,4);
     	c2.setBackground('+');
@@ -22,7 +23,6 @@ public class MainTest {
     	
     	RLabel lab = new RLabel("hello world !");
     	c.add(lab);
-        //lab.setBackground('&');
     	
     	List<String> l = new ArrayList<String>();
     	l.add("1");

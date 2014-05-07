@@ -163,15 +163,21 @@ public class RComponent{
 	
 	public void print() {
 		this.repaint();
+        if(this.border!=0) {
+        	this.putInTemporary();
+        } else {
+        	this.tmp_graphics = this.graphics;
+        }
 		String toRet = "";
-		for(int i = 0 ; i < this.graphics.length ; i++) {
-			for(int j = 0 ; j < this.graphics[0].length ; j++) {
-				toRet += this.graphics[i][j];
+		for(int i = 0 ; i < this.tmp_graphics.length ; i++) {
+			for(int j = 0 ; j < this.tmp_graphics[0].length ; j++) {
+				toRet += this.tmp_graphics[i][j];
 			}
-			if(i<this.lines-1) {
+			if(i<this.tmp_graphics.length-1) {
 			    toRet += '\n';
 			}
 		}
+		this.tmp_graphics = null;
 		System.out.println(toRet);
 	}
 }

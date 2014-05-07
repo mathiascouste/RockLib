@@ -3,14 +3,14 @@ package component.container;
 import java.util.ArrayList;
 import java.util.List;
 
+import layout.HazardLayout;
+import layout.Layout;
+
 import component.RComponent;
 
 public class RContainer extends RComponent {
-    public static final int MODE_HAZARD = 0;
-    public static final int MODE_LINE_AXIS = 1;
-    public static final int MODE_PAGE_AXIS = 2;
     protected List<RComponent> items;
-    protected int mode;
+    protected Layout layout;
     
     public RContainer() {
         this(new ArrayList<RComponent>());
@@ -18,13 +18,13 @@ public class RContainer extends RComponent {
     public RContainer(List<RComponent> items) {
         super();
         this.items = items;
-        this.mode = MODE_HAZARD;
+        this.layout = new HazardLayout();
     }
     public RContainer(RComponent item) {
         super();
         this.items = new ArrayList<RComponent>();
         this.items.add(item);
-        this.mode = 0;
+        this.layout = new HazardLayout();
     }
     
     public void add(RComponent component) {
@@ -62,7 +62,7 @@ public class RContainer extends RComponent {
     public void clear() {
         this.items.clear();
     }
-    protected void enlarge() {
+    public void enlarge() {
         int x=0;
         int y=0;
         for(RComponent c : this.items) {
@@ -83,32 +83,12 @@ public class RContainer extends RComponent {
     }
     
     public void placeComponents() {
-        int pos = 0;
-        switch(this.mode) {
-        case MODE_HAZARD:break;
-        case MODE_LINE_AXIS:
-            for(RComponent c : this.items) {
-                c.setPositionY(pos);
-                c.setPositionX(0);
-                pos+=c.getColumns();
-            }
-            this.enlarge();
-            break;
-        case MODE_PAGE_AXIS:
-            for(RComponent c : this.items) {
-                c.setPositionX(pos);
-                c.setPositionY(0);
-                pos+=c.getLines();
-            }
-            this.enlarge();
-            break;
-        default:;
-        }
+        this.layout.placeComponents(this);
     }
-    public int getMode() {
-        return mode;
+    public Layout getLayout() {
+        return layout;
     }
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 }

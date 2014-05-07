@@ -1,8 +1,5 @@
 package component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RComponent{
 	// SRC=http://en.wikipedia.org/wiki/Box-drawing_character
     private static final char[] ASCII_HORIZONTAL = {' ','─','━','═','┄','┅'};
@@ -16,8 +13,7 @@ public class RComponent{
     private static final char[] ASCII_MIDDLE_R =   {' ','┤','.','╣','.','.'};
     private static final char[] ASCII_MIDDLE_B =   {' ','┴','.','╩','.','.'};
     private static final char[] ASCII_MIDDLE_T =   {' ','┬','.','╦','.','.'};
-    private static final int x=0;
-    public static final int BORDER_0 = 0;
+    public static final int NO_BORDER = 0;
     public static final int BORDER_SOLID_THIN = 1;
     public static final int BORDER_SOLID_THICK = 2;
     public static final int BORDER_DOUBLE_THIN = 3;
@@ -27,7 +23,7 @@ public class RComponent{
 	protected int positionY;
 	protected int lines;
 	protected int columns;
-    protected char[][] tmp_graphics;
+    protected char[][] tmpGraphics;
     protected char[][] graphics;
 	protected char background;
 	protected int border;
@@ -36,12 +32,10 @@ public class RComponent{
 		this(1,1);
 	}
 	public RComponent(int columns, int lines) {
-        this.positionX = positionX;
-        this.positionY = positionY;
         this.lines = lines;
         this.columns = columns;
         this.background = ' ';
-        this.border = RComponent.BORDER_0;
+        this.border = RComponent.NO_BORDER;
         
         this.adjustGraphics();
 	}
@@ -63,37 +57,37 @@ public class RComponent{
         if(this.border!=0) {
         	this.putInTemporary();
         } else {
-        	this.tmp_graphics = this.graphics;
+        	this.tmpGraphics = this.graphics;
         }
-        for(int i = 0; i < this.tmp_graphics.length ; i++) {
-            for(int j = 0 ; j < this.tmp_graphics[i].length ; j++) {
-                graphics[this.positionX+i][this.positionY+j] = this.tmp_graphics[i][j];
+        for(int i = 0; i < this.tmpGraphics.length ; i++) {
+            for(int j = 0 ; j < this.tmpGraphics[i].length ; j++) {
+                graphics[this.positionX+i][this.positionY+j] = this.tmpGraphics[i][j];
             }
         }
-        this.tmp_graphics = null;
+        this.tmpGraphics = null;
 	}
 	private void putInTemporary() {
-		this.tmp_graphics = new char[this.lines+2][this.columns+2];
-		for(int i = 0 ; i < tmp_graphics.length ; i++) {
-			for(int j = 0 ; j < tmp_graphics[0].length ; j++) {
-				tmp_graphics[i][j] = this.background;
+		this.tmpGraphics = new char[this.lines+2][this.columns+2];
+		for(int i = 0 ; i < tmpGraphics.length ; i++) {
+			for(int j = 0 ; j < tmpGraphics[0].length ; j++) {
+				tmpGraphics[i][j] = this.background;
 			}
 		}
-		tmp_graphics[0][0] = ASCII_CORNER_T_L[this.border];
-		tmp_graphics[this.lines+1][0] = ASCII_CORNER_B_L[this.border];
-		tmp_graphics[0][this.columns+1] = ASCII_CORNER_T_R[this.border];
-		tmp_graphics[this.lines+1][this.columns+1] = ASCII_CORNER_B_R[this.border];
+		tmpGraphics[0][0] = ASCII_CORNER_T_L[this.border];
+		tmpGraphics[this.lines+1][0] = ASCII_CORNER_B_L[this.border];
+		tmpGraphics[0][this.columns+1] = ASCII_CORNER_T_R[this.border];
+		tmpGraphics[this.lines+1][this.columns+1] = ASCII_CORNER_B_R[this.border];
         for(int i = 1 ; i < this.columns+1 ; i++) {
-        	tmp_graphics[0][i] = ASCII_HORIZONTAL[this.border];
-        	tmp_graphics[this.lines+1][i] = ASCII_HORIZONTAL[this.border];
+        	tmpGraphics[0][i] = ASCII_HORIZONTAL[this.border];
+        	tmpGraphics[this.lines+1][i] = ASCII_HORIZONTAL[this.border];
         }
         for(int i = 1 ; i < this.lines+1 ; i++) {
-        	tmp_graphics[i][0] = ASCII_VERTICAL[this.border];
-        	tmp_graphics[i][this.columns+1] = ASCII_VERTICAL[this.border];
+        	tmpGraphics[i][0] = ASCII_VERTICAL[this.border];
+        	tmpGraphics[i][this.columns+1] = ASCII_VERTICAL[this.border];
         }
         for(int i = 0 ; i < graphics.length ; i++) {
 			for(int j = 0 ; j < graphics[0].length ; j++) {
-				tmp_graphics[i+1][j+1] = this.graphics[i][j];
+				tmpGraphics[i+1][j+1] = this.graphics[i][j];
 			}
 		}
 	}
@@ -157,27 +151,24 @@ public class RComponent{
 	public void setBorder(int border) {
 		this.border = border;
 	}
-	public void setGraphics(char[][] graphics) {
-		this.graphics = graphics;
-	}
 	
 	public void print() {
 		this.repaint();
         if(this.border!=0) {
         	this.putInTemporary();
         } else {
-        	this.tmp_graphics = this.graphics;
+        	this.tmpGraphics = this.graphics;
         }
 		String toRet = "";
-		for(int i = 0 ; i < this.tmp_graphics.length ; i++) {
-			for(int j = 0 ; j < this.tmp_graphics[0].length ; j++) {
-				toRet += this.tmp_graphics[i][j];
+		for(int i = 0 ; i < this.tmpGraphics.length ; i++) {
+			for(int j = 0 ; j < this.tmpGraphics[0].length ; j++) {
+				toRet += this.tmpGraphics[i][j];
 			}
-			if(i<this.tmp_graphics.length-1) {
+			if(i<this.tmpGraphics.length-1) {
 			    toRet += '\n';
 			}
 		}
-		this.tmp_graphics = null;
+		this.tmpGraphics = null;
 		System.out.println(toRet);
 	}
 }

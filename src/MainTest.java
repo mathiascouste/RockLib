@@ -17,12 +17,12 @@ public class MainTest {
     	
     	RComponent c2 = new RComponent(2,4);
     	c2.setBackground('+');
-        c2.setBorder(RComponent.BORDER_3);
+        c2.setBorder(RComponent.BORDER_SOLID_THIN);
     	c.add(c2);
     	
     	RLabel lab = new RLabel("hello world !");
     	c.add(lab);
-        lab.setBackground('&');
+        //lab.setBackground('&');
     	
     	List<String> l = new ArrayList<String>();
     	l.add("1");
@@ -32,9 +32,9 @@ public class MainTest {
         l.add("10100");
     	
     	RList<String> rl = new RList(l);
-        rl.setBorder(RComponent.BORDER_3);
-        rl.setBackground('Ž');
-        lab.setBorder(RComponent.BORDER_3);
+        lab.setBorder(RComponent.BORDER_DOTTED_THIN);
+        rl.setBorder(RComponent.BORDER_DOTTED_THICK);
+        //rl.setBackground(' ');
     	c.add(rl);
     	
     	c.print();

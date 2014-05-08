@@ -2,23 +2,25 @@ package component;
 
 public class RComponent{
 	// SRC=http://en.wikipedia.org/wiki/Box-drawing_character
-    private static final char[] ASCII_HORIZONTAL = {' ','─','━','═','┄','┅'};
-    private static final char[] ASCII_VERTICAL =   {' ','│','┃','║','┊','┇'};
-    private static final char[] ASCII_CORNER_B_L = {' ','└','┗','╚','└','┗'};
-    private static final char[] ASCII_CORNER_B_R = {' ','┘','┛','╝','┘','┛'};
-    private static final char[] ASCII_CORNER_T_L = {' ','┌','┏','╔','┌','┏'};
-    private static final char[] ASCII_CORNER_T_R = {' ','┐','┓','╗','┐','┓'};
-    private static final char[] ASCII_CENTER =     {' ','┼','.','╬','.','.'};
-    private static final char[] ASCII_MIDDLE_L =   {' ','├','.','╠','.','.'};
-    private static final char[] ASCII_MIDDLE_R =   {' ','┤','.','╣','.','.'};
-    private static final char[] ASCII_MIDDLE_B =   {' ','┴','.','╩','.','.'};
-    private static final char[] ASCII_MIDDLE_T =   {' ','┬','.','╦','.','.'};
+    private static final char[] ASCII_HORIZONTAL = {' ','─','━','═','┄','┅','▒'};
+    private static final char[] ASCII_VERTICAL =   {' ','│','┃','║','┊','┇','▒'};
+    private static final char[] ASCII_CORNER_B_L = {' ','└','┗','╚','└','┗','▒'};
+    private static final char[] ASCII_CORNER_B_R = {' ','┘','┛','╝','┘','┛','▒'};
+    private static final char[] ASCII_CORNER_T_L = {' ','┌','┏','╔','┌','┏','▒'};
+    private static final char[] ASCII_CORNER_T_R = {' ','┐','┓','╗','┐','┓','▒'};
+    private static final char[] ASCII_CENTER =     {' ','┼','.','╬','.','.','▒'};
+    private static final char[] ASCII_MIDDLE_L =   {' ','├','.','╠','.','.','▒'};
+    private static final char[] ASCII_MIDDLE_R =   {' ','┤','.','╣','.','.','▒'};
+    private static final char[] ASCII_MIDDLE_B =   {' ','┴','.','╩','.','.','▒'};
+    private static final char[] ASCII_MIDDLE_T =   {' ','┬','.','╦','.','.','▒'};
+    private static final char ASCII_SHADOW = '▒';
     public static final int NO_BORDER = 0;
     public static final int BORDER_SOLID_THIN = 1;
     public static final int BORDER_SOLID_THICK = 2;
     public static final int BORDER_DOUBLE_THIN = 3;
     public static final int BORDER_DOTTED_THIN = 4;
     public static final int BORDER_DOTTED_THICK = 5;
+    public static final int BORDER_STRANGE = 6;
 	protected int positionX;
 	protected int positionY;
 	protected int lines;
@@ -27,7 +29,7 @@ public class RComponent{
     protected char[][] graphics;
 	protected char background;
 	protected int border;
-
+	protected boolean shadow;
 	public RComponent() {
 		this(1,1);
 	}
@@ -36,6 +38,7 @@ public class RComponent{
         this.columns = columns;
         this.background = ' ';
         this.border = RComponent.NO_BORDER;
+        this.shadow = false;
         
         this.adjustGraphics();
 	}
@@ -54,7 +57,7 @@ public class RComponent{
 	}
 	public void paint(char[][] graphics) {
         this.repaint();
-        if(this.border!=0) {
+        if(this.border!=0 || this.shadow) {
         	this.putInTemporary();
         } else {
         	this.tmpGraphics = this.graphics;
@@ -67,31 +70,48 @@ public class RComponent{
         this.tmpGraphics = null;
 	}
 	private void putInTemporary() {
-		this.tmpGraphics = new char[this.lines+2][this.columns+2];
+		int bonus = 0;
+	    if(this.border!=0) {
+	        bonus += 2;
+	    }
+	    if(this.shadow) {
+	    	bonus += 1;
+	    }
+		this.tmpGraphics = new char[this.lines+bonus][this.columns+bonus];
 		for(int i = 0 ; i < tmpGraphics.length ; i++) {
 			for(int j = 0 ; j < tmpGraphics[0].length ; j++) {
 				tmpGraphics[i][j] = this.background;
 			}
 		}
-		tmpGraphics[0][0] = ASCII_CORNER_T_L[this.border];
-		tmpGraphics[this.lines+1][0] = ASCII_CORNER_B_L[this.border];
-		tmpGraphics[0][this.columns+1] = ASCII_CORNER_T_R[this.border];
-		tmpGraphics[this.lines+1][this.columns+1] = ASCII_CORNER_B_R[this.border];
-        for(int i = 1 ; i < this.columns+1 ; i++) {
-        	tmpGraphics[0][i] = ASCII_HORIZONTAL[this.border];
-        	tmpGraphics[this.lines+1][i] = ASCII_HORIZONTAL[this.border];
-        }
-        for(int i = 1 ; i < this.lines+1 ; i++) {
-        	tmpGraphics[i][0] = ASCII_VERTICAL[this.border];
-        	tmpGraphics[i][this.columns+1] = ASCII_VERTICAL[this.border];
-        }
-        for(int i = 0 ; i < graphics.length ; i++) {
-			for(int j = 0 ; j < graphics[0].length ; j++) {
-				tmpGraphics[i+1][j+1] = this.graphics[i][j];
+		if(this.border!=0) {
+			tmpGraphics[0][0] = ASCII_CORNER_T_L[this.border];
+			tmpGraphics[this.lines+1][0] = ASCII_CORNER_B_L[this.border];
+			tmpGraphics[0][this.columns+1] = ASCII_CORNER_T_R[this.border];
+			tmpGraphics[this.lines+1][this.columns+1] = ASCII_CORNER_B_R[this.border];
+	        for(int i = 1 ; i < this.columns+1 ; i++) {
+	        	tmpGraphics[0][i] = ASCII_HORIZONTAL[this.border];
+	        	tmpGraphics[this.lines+1][i] = ASCII_HORIZONTAL[this.border];
+	        }
+	        for(int i = 1 ; i < this.lines+1 ; i++) {
+	        	tmpGraphics[i][0] = ASCII_VERTICAL[this.border];
+	        	tmpGraphics[i][this.columns+1] = ASCII_VERTICAL[this.border];
+	        }
+	        for(int i = 0 ; i < graphics.length ; i++) {
+				for(int j = 0 ; j < graphics[0].length ; j++) {
+					tmpGraphics[i+1][j+1] = this.graphics[i][j];
+				}
+			}
+		}
+		if(this.shadow) {
+			for(int i = 1 ; i < tmpGraphics.length ; i ++) {
+				tmpGraphics[i][tmpGraphics[0].length-1] = ASCII_SHADOW;
+			}
+			for(int i = 1 ; i < tmpGraphics.length-1 ; i ++) {
+				tmpGraphics[tmpGraphics.length-1][i] = ASCII_SHADOW;
 			}
 		}
 	}
-	public void paintBorder(char[][] graphics) {
+	/*public void paintBorder(char[][] graphics) {
         graphics[this.positionX][this.positionY] = ASCII_CORNER_T_L[this.border];
         graphics[this.positionX+this.lines+1][this.positionY] = ASCII_CORNER_B_L[this.border];
         graphics[this.positionX][this.positionY+this.columns+1] = ASCII_CORNER_T_R[this.border];
@@ -104,7 +124,7 @@ public class RComponent{
             graphics[this.positionX+i][this.positionY] = ASCII_VERTICAL[this.border];
             graphics[this.positionX+i][this.positionY+this.columns+1] = ASCII_VERTICAL[this.border];
         }
-    }
+    }*/
     public int getPositionX() {
 		return positionX;
 	}
@@ -118,22 +138,28 @@ public class RComponent{
 		this.positionY = positionY;
 	}
 	public int getLines() {
-	    if(this.border==0) {
-	        return lines;
-	    } else {
-	        return lines+2;
+		int bonus = 0;
+	    if(this.border!=0) {
+	        bonus += 2;
 	    }
+	    if(this.shadow) {
+	    	bonus += 1;
+	    }
+	    return lines+bonus;
 	}
 	public void setLines(int lines) {
 		this.lines = lines;
 		this.adjustGraphics();
 	}
 	public int getColumns() {
-        if(this.border==0) {
-            return columns;
-        } else {
-            return columns+2;
-        }
+		int bonus = 0;
+	    if(this.border!=0) {
+	        bonus += 2;
+	    }
+	    if(this.shadow) {
+	    	bonus += 1;
+	    }
+	    return columns+bonus;
 	}
 	public void setColumns(int columns) {
 		this.columns = columns;
@@ -154,7 +180,7 @@ public class RComponent{
 	
 	public void print() {
 		this.repaint();
-        if(this.border!=0) {
+        if(this.border!=0 | this.shadow) {
         	this.putInTemporary();
         } else {
         	this.tmpGraphics = this.graphics;
@@ -170,5 +196,11 @@ public class RComponent{
 		}
 		this.tmpGraphics = null;
 		System.out.println(toRet);
+	}
+	public boolean isShadow() {
+		return shadow;
+	}
+	public void setShadow(boolean shadow) {
+		this.shadow = shadow;
 	}
 }
